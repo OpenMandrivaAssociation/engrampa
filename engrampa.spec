@@ -1,8 +1,7 @@
 %define url_ver %(echo %{version}|cut -d. -f1,2)
 %define oname   mate-file-archiver
-%define name    engrampa
 
-Name:          %{name}
+Name:          engrampa
 Version:       1.6.0
 Release:       1
 Summary:       An archive manager for MATE Desktop
@@ -71,8 +70,6 @@ NOCONFIGURE=1 ./autogen.sh
 %makeinstall_std
 
 %find_lang %{name} --with-gnome --all-name
-
-find %{buildroot} -name "*.la" -exec rm -f {} ';'
 
 #gw rpmlint errors
 chrpath -d %{buildroot}%{_bindir}/%name
