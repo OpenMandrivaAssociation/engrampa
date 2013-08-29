@@ -3,7 +3,7 @@
 
 Name:          engrampa
 Version:       1.6.0
-Release:       1
+Release:       2
 Summary:       An archive manager for MATE Desktop
 Group:         Archiving/Compression
 License:       GPLv2+ and LGPLv2+
@@ -27,7 +27,8 @@ BuildRequires: pkgconfig(gsettings-desktop-schemas)
 Suggests:      cdrecord-isotools
 # for the gsettings schema
 Requires:      caja
-Provides:      %{oname} = %{version}-%{release}
+
+%rename %{oname}
 
 %description
 Engrampa is an archive manager for the GNOME environment.  This means that 
@@ -52,7 +53,6 @@ like tar and zip. The supported file types are :
 
 %prep
 %setup -q -n %{oname}-%{version}
-%apply_patches
 
 %build
 NOCONFIGURE=1 ./autogen.sh
@@ -72,7 +72,7 @@ NOCONFIGURE=1 ./autogen.sh
 %find_lang %{name} --with-gnome --all-name
 
 #gw rpmlint errors
-chrpath -d %{buildroot}%{_bindir}/%name
+chrpath -d %{buildroot}%{_bindir}/%{name}
 chrpath -d %{buildroot}%{_libdir}/caja/*/*.so
 
 %files -f %{name}.lang
