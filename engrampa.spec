@@ -9,13 +9,8 @@ Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
-
 BuildRequires:	intltool
-BuildRequires:	itstool
 BuildRequires:	mate-common
-BuildRequires:	which
-BuildRequires:	xml2po
-BuildRequires:	xsltproc
 BuildRequires:	yelp-tools
 BuildRequires:	magic-devel
 BuildRequires:	pkgconfig(gsettings-desktop-schemas)
