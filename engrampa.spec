@@ -3,7 +3,7 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.8.0
+Version:	1.8.1
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
@@ -47,11 +47,9 @@ like tar and zip. The supported file types are:
 
 %prep
 %setup -q
-NOCONFIGURE=1 ./autogen.sh
 
 %build
 %configure2_5x \
-	--disable-static \
 	--with-gtk=2.0 \
 	--enable-packagekit \
 	--enable-caja-actions
