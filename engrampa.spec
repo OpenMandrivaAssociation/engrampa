@@ -3,8 +3,8 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.8.1
-Release:	2
+Version:	1.14.1
+Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
@@ -15,7 +15,7 @@ BuildRequires:	yelp-tools
 BuildRequires:	magic-devel
 BuildRequires:	pkgconfig(gsettings-desktop-schemas)
 BuildRequires:	pkgconfig(glib-2.0)
-BuildRequires:	pkgconfig(gtk+-2.0)
+BuildRequires:	pkgconfig(gtk+-3.0)
 BuildRequires:	pkgconfig(json-glib-1.0)
 BuildRequires:	pkgconfig(libcaja-extension)
 BuildRequires:	pkgconfig(sm)
@@ -50,7 +50,7 @@ like tar and zip. The supported file types are:
 
 %build
 %configure2_5x \
-	--with-gtk=2.0 \
+	--with-gtk=3.0 \
 	--enable-packagekit \
 	--enable-caja-actions
 
@@ -68,11 +68,16 @@ rm -fr %{buildroot}%{_datadir}/MateConf
 %doc README COPYING NEWS AUTHORS
 %{_bindir}/%{name}
 %{_libexecdir}/%{name}
+%{_libexecdir}/%{name}-server
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/glib-2.0/schemas/org.mate.engrampa.gschema.xml
 %{_iconsdir}/hicolor/*/apps/*.png
 %{_iconsdir}/hicolor/scalable/apps/*.svg
 %{_libdir}/caja/extensions-2.0/libcaja-%{name}.so
+%{_datadir}/appdata/engrampa.appdata.xml
+%{_datadir}/caja/extensions/libcaja-engrampa.caja-extension
+%{_datadir}/dbus-1/services/org.mate.Engrampa.service
+
 %{_mandir}/man1/engrampa.1*
 
