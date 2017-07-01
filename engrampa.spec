@@ -3,7 +3,7 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.14.1
+Version:	1.18.2
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
@@ -49,19 +49,16 @@ like tar and zip. The supported file types are:
 %setup -q
 
 %build
-%configure2_5x \
-	--with-gtk=3.0 \
+%configure \
 	--enable-packagekit \
-	--enable-caja-actions
-
+	--enable-caja-actions \
+	%{nil}
 %make
 
 %install
 %makeinstall_std
 
-# remove unneeded converters
-rm -fr %{buildroot}%{_datadir}/MateConf
-
+# locales
 %find_lang %{name} --with-gnome --all-name
 
 %files -f %{name}.lang
@@ -78,6 +75,5 @@ rm -fr %{buildroot}%{_datadir}/MateConf
 %{_datadir}/appdata/engrampa.appdata.xml
 %{_datadir}/caja/extensions/libcaja-engrampa.caja-extension
 %{_datadir}/dbus-1/services/org.mate.Engrampa.service
-
 %{_mandir}/man1/engrampa.1*
 
