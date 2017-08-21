@@ -9,6 +9,7 @@ Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
+Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
@@ -18,7 +19,7 @@ BuildRequires:	yelp-tools
 BuildRequires:	magic-devel
 BuildRequires:	pkgconfig(gsettings-desktop-schemas)
 BuildRequires:	pkgconfig(gio-2.0)
-BuildRequires:	pkgconfig(gio-unix-2.0) >= 2.25.5
+BuildRequires:	pkgconfig(gio-unix-2.0)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(gthread-2.0)
 BuildRequires:	pkgconfig(gtk+-3.0)
@@ -107,6 +108,7 @@ like tar and zip. The supported file types are :
 
 %prep
 %setup -q
+%apply_patches
 
 %build
 %configure \
