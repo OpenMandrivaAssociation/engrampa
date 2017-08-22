@@ -136,58 +136,10 @@
  	fields = g_strsplit (field_name, " -> ", 2);
  
  	if (fields[1] == NULL) {
-@@ -199,9 +228,9 @@
+@@ -239,6 +268,54 @@
  
- 	else if (is_mime_type (comm->mime_type, "application/x-bzip-compressed-tar"))
- 		if (is_program_in_path ("lbzip2"))
--			fr_process_add_arg (comm->process, "--use-compress-program=lbzip2");
-+			fr_process_add_arg (comm->process, "--use-compress-program lbzip2");
- 		else
--			fr_process_add_arg (comm->process, "--use-compress-program=bzip2");
-+			fr_process_add_arg (comm->process, "--use-compress-program bzip2");
  
- 	else if (is_mime_type (comm->mime_type, "application/x-tarz")) {
- 		if (is_program_in_path ("gzip"))
-@@ -210,28 +239,76 @@
- 			fr_process_add_arg (comm->process, "-Z");
- 	}
- 	else if (is_mime_type (comm->mime_type, "application/x-lrzip-compressed-tar"))
--		fr_process_add_arg (comm->process, "--use-compress-program=lrzip");
-+		fr_process_add_arg (comm->process, "--use-compress-program lrzip");
- 
- 	else if (is_mime_type (comm->mime_type, "application/x-lzip-compressed-tar"))
--		fr_process_add_arg (comm->process, "--use-compress-program=lzip");
-+		fr_process_add_arg (comm->process, "--use-compress-program lzip");
- 
- 	else if (is_mime_type (comm->mime_type, "application/x-lzma-compressed-tar"))
--		fr_process_add_arg (comm->process, "--use-compress-program=lzma");
-+		fr_process_add_arg (comm->process, "--use-compress-program lzma");
- 
- 	else if (is_mime_type (comm->mime_type, "application/x-xz-compressed-tar"))
- 		if (is_program_in_path ("pixz"))
--			fr_process_add_arg (comm->process, "--use-compress-program=pixz");
-+			fr_process_add_arg (comm->process, "--use-compress-program pixz");
- 		else
--			fr_process_add_arg (comm->process, "--use-compress-program=xz");
-+			fr_process_add_arg (comm->process, "--use-compress-program xz");
- 
- 	else if (is_mime_type (comm->mime_type, "application/x-lzop-compressed-tar"))
--		fr_process_add_arg (comm->process, "--use-compress-program=lzop");
-+		fr_process_add_arg (comm->process, "--use-compress-program lzop");
- 
- 	else if (is_mime_type (comm->mime_type, "application/x-7z-compressed-tar")) {
- 		FrCommandTar *comm_tar = (FrCommandTar*) comm;
- 		char         *option;
- 
--		option = g_strdup_printf ("--use-compress-program=%s", comm_tar->compress_command);
-+		option = g_strdup_printf ("--use-compress-program %s", comm_tar->compress_command);
-+		fr_process_add_arg (comm->process, option);
-+		g_free (option);
-+	}
-+}
-+
-+
-+static void
+ static void
 +add_uncompress_arg (FrCommand *comm)
 +{
 +	if (is_mime_type (comm->mime_type, "application/x-compressed-tar"))
@@ -229,9 +181,16 @@
 +		char         *option;
 +
 +		option = g_strdup_printf ("--use-compress-program=%s -d", comm_tar->compress_command);
- 		fr_process_add_arg (comm->process, option);
- 		g_free (option);
- 	}
++		fr_process_add_arg (comm->process, option);
++		g_free (option);
++	}
++}
++
++
++static void
+ begin_tar_command (FrCommand *comm)
+ {
+ 	char *command = NULL;
 @@ -266,11 +343,11 @@
  	fr_process_set_out_line_func (comm->process, process_line, comm);
  
@@ -334,4 +293,3 @@
  	fr_process_add_arg (comm->process, "-v");
  	fr_process_add_arg (comm->process, "-p");
  
-
