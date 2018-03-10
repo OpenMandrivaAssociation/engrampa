@@ -1,0 +1,295 @@
+--- a/src/fr-command-tar.c.orig
++++ b/src/fr-command-tar.c
+@@ -27,6 +27,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
++
++#define __USE_XOPEN
+ #include <time.h>
+ 
+ #include <glib.h>
+@@ -52,39 +54,45 @@
+ /* -- list -- */
+ 
+ static time_t
+-mktime_from_string (char *date_s,
++mktime_from_string (char *datem_s, char *dated_s,char *datey_s,
+ 		    char *time_s)
+ {
++	time_t rawtime;
+ 	struct tm   tm = {0, };
+ 	char      **fields;
++	char this_year[5];
+ 
+ 	tm.tm_isdst = -1;
+ 
+ 	/* date */
+-
+-	fields = g_strsplit (date_s, "-", 3);
+-	if (fields[0] != NULL) {
+-		tm.tm_year = atoi (fields[0]) - 1900;
+-		if (fields[1] != NULL) {
+-			tm.tm_mon = atoi (fields[1]) - 1;
+-			if (fields[2] != NULL)
+-				tm.tm_mday = atoi (fields[2]);
+-		}
+-	}
+-	g_strfreev (fields);
++	/*   year */
++	if (datey_s != NULL)
++		tm.tm_year = atoi (datey_s) - 1900;
++	else {
++		time (&rawtime);
++		if(strftime(this_year, sizeof this_year, "%Y",  localtime (&rawtime)))
++			tm.tm_year = atoi (this_year) - 1900;
++	}
++	/*   month */
++	if (datem_s != NULL)
++		strptime(datem_s, "%b", &tm);
++	/*   day */
++	if (dated_s != NULL)
++		tm.tm_mday = atoi (dated_s);
+ 
+ 	/* time */
+-
+-	fields = g_strsplit (time_s, ":", 3);
+-	if (fields[0] != NULL) {
+-		tm.tm_hour = atoi (fields[0]);
+-		if (fields[1] != NULL) {
+-			tm.tm_min  = atoi (fields[1]);
+-			if (fields[2] != NULL)
+-				tm.tm_sec  = atoi (fields[2]);
+-		}
+-	}
+-	g_strfreev (fields);
++	if (time_s != NULL) {
++		fields = g_strsplit (time_s, ":", 3);
++		if (fields[0] != NULL) {
++			tm.tm_hour = atoi (fields[0]);
++			if (fields[1] != NULL) {
++				tm.tm_min  = atoi (fields[1]);
++				if (fields[2] != NULL)
++					tm.tm_sec  = atoi (fields[2]);
++			}
++		}
++		g_strfreev (fields);
++	}
+ 
+ 	return mktime (&tm);
+ }
+@@ -128,12 +136,18 @@
+ 	FrCommand   *comm = FR_COMMAND (data);
+ 	char       **fields;
+ 	int          date_idx;
+-	char        *field_date, *field_time, *field_size, *field_name;
++	char        *field_month, *field_day, *field_year, *field_time, *field_size, *field_name;
+ 	char        *name;
+ 
+ 	g_return_if_fail (line != NULL);
+ 
+-	date_idx = file_list__get_index_from_pattern (line, "%n%n%n%n-%n%n-%n%n %n%n:%n%n");
++        /* date format with time */
++	date_idx = file_list__get_index_from_pattern (line, "%c%c%c %a%n %n%n:%n%n");
++
++	/* date format with year */
++	if (date_idx < 0)
++		date_idx = file_list__get_index_from_pattern (line, "%c%c%c %a%n  %n%n%n%n");
++
+ 	if (date_idx < 0)
+ 		return;
+ 
+@@ -143,15 +157,30 @@
+ 	fdata->size = g_ascii_strtoull (field_size, NULL, 10);
+ 	g_free (field_size);
+ 
+-	field_date = file_list__get_next_field (line, date_idx, 1);
+-	field_time = file_list__get_next_field (line, date_idx, 2);
+-	fdata->modified = mktime_from_string (field_date, field_time);
+-	g_free (field_date);
+-	g_free (field_time);
++	field_month = file_list__get_next_field (line, date_idx, 1);
++
++	field_day = file_list__get_next_field (line, date_idx, 2);
++
++	if (memchr(line+date_idx+8, ':',date_idx+9)) {
++		field_year = NULL;
++		field_time = file_list__get_next_field (line, date_idx, 3);
++
++	}
++	else {
++		field_year = file_list__get_next_field (line, date_idx, 3);
++		field_time = NULL;
++
++	}
++
++	fdata->modified = mktime_from_string (field_month, field_day, field_year, field_time);
++	if ( field_month != NULL ) g_free (field_month);
++	if ( field_day   != NULL ) g_free (field_day);
++	if ( field_year  != NULL ) g_free (field_year);
++	if ( field_time  != NULL ) g_free (field_time);
+ 
+ 	/* Full path */
+ 
+-	field_name = tar_get_last_field (line, date_idx, 3);
++	field_name = tar_get_last_field (line, date_idx, 4);
+ 	fields = g_strsplit (field_name, " -> ", 2);
+ 
+ 	if (fields[1] == NULL) {
+@@ -239,6 +268,54 @@
+ 
+ 
+ static void
++add_uncompress_arg (FrCommand *comm)
++{
++	if (is_mime_type (comm->mime_type, "application/x-compressed-tar"))
++		;
++//		fr_process_add_arg (comm->process, "-z");
++
++	else if (is_mime_type (comm->mime_type, "application/x-bzip-compressed-tar"))
++		if (is_program_in_path ("lbzip2"))
++			fr_process_add_arg (comm->process, "--use-compress-program=lbzip2 -d");
++		else
++			fr_process_add_arg (comm->process, "--use-compress-program=bzip2 -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-tarz")) {
++		if (is_program_in_path ("gzip"))
++			fr_process_add_arg (comm->process, "--use-compress-program=gzip -d");
++//		else
++//			fr_process_add_arg (comm->process, "-Z");
++	}
++	else if (is_mime_type (comm->mime_type, "application/x-lrzip-compressed-tar"))
++		fr_process_add_arg (comm->process, "--use-compress-program=lrzip -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-lzip-compressed-tar"))
++		fr_process_add_arg (comm->process, "--use-compress-program=lzip -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-lzma-compressed-tar"))
++		fr_process_add_arg (comm->process, "--use-compress-program=lzma -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-xz-compressed-tar"))
++		if (is_program_in_path ("pixz"))
++			fr_process_add_arg (comm->process, "--use-compress-program=pixz -d");
++		else
++			fr_process_add_arg (comm->process, "--use-compress-program=xz -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-lzop-compressed-tar"))
++		fr_process_add_arg (comm->process, "--use-compress-program=lzop -d");
++
++	else if (is_mime_type (comm->mime_type, "application/x-7z-compressed-tar")) {
++		FrCommandTar *comm_tar = (FrCommandTar*) comm;
++		char         *option;
++
++		option = g_strdup_printf ("--use-compress-program=%s -d", comm_tar->compress_command);
++		fr_process_add_arg (comm->process, option);
++		g_free (option);
++	}
++}
++
++
++static void
+ begin_tar_command (FrCommand *comm)
+ {
+ 	char *command = NULL;
+@@ -266,11 +343,11 @@
+ 	fr_process_set_out_line_func (comm->process, process_line, comm);
+ 
+ 	begin_tar_command (comm);
+-	fr_process_add_arg (comm->process, "--force-local");
+-	fr_process_add_arg (comm->process, "--no-wildcards");
++//	fr_process_add_arg (comm->process, "--force-local");
++//	fr_process_add_arg (comm->process, "--no-wildcards");
+ 	fr_process_add_arg (comm->process, "-tvf");
+ 	fr_process_add_arg (comm->process, comm->filename);
+-	add_compress_arg (comm);
++	add_uncompress_arg (comm);
+ 	fr_process_end_command (comm->process);
+ 	fr_process_start (comm->process);
+ }
+@@ -333,11 +410,11 @@
+ 				      comm);
+ 
+ 	begin_tar_command (comm);
+-	fr_process_add_arg (comm->process, "--force-local");
++//	fr_process_add_arg (comm->process, "--force-local");
+ 	if (! recursive)
+ 		fr_process_add_arg (comm->process, "--no-recursion");
+-	fr_process_add_arg (comm->process, "--no-wildcards");
+-	fr_process_add_arg (comm->process, "--no-unquote");
++//	fr_process_add_arg (comm->process, "--no-wildcards");
++//	fr_process_add_arg (comm->process, "--no-unquote");
+ 	fr_process_add_arg (comm->process, "-v");
+ 	fr_process_add_arg (comm->process, "-p");
+ 
+@@ -373,16 +450,17 @@
+ 	fr_process_end_command (comm->process);
+ }
+ 
+-
++/*
+ static void
+ process_line__delete (char     *line,
+ 		      gpointer  data)
+ {
+-	/* Translators: after the colon there is a filename. */
++	/ * Translators: after the colon there is a filename. * /
+ 	process_line__generic (line, data, _("Removing file: "));
+ }
+-
+-
++*/
++
++/*
+ static void
+ begin_func__delete (gpointer data)
+ {
+@@ -390,13 +468,14 @@
+ 	fr_command_progress (comm, -1.0);
+ 	fr_command_message (comm, _("Deleting files from archive"));
+ }
+-
++*/
+ 
+ static void
+ fr_command_tar_delete (FrCommand  *comm,
+ 		       const char *from_file,
+ 		       GList      *file_list)
+ {
++/*
+ 	FrCommandTar *c_tar = FR_COMMAND_TAR (comm);
+ 	GList        *scan;
+ 
+@@ -406,9 +485,9 @@
+ 
+ 	begin_tar_command (comm);
+ 	fr_process_set_begin_func (comm->process, begin_func__delete, comm);
+-	fr_process_add_arg (comm->process, "--force-local");
+-	fr_process_add_arg (comm->process, "--no-wildcards");
+-	fr_process_add_arg (comm->process, "--no-unquote");
++//	fr_process_add_arg (comm->process, "--force-local");
++//	fr_process_add_arg (comm->process, "--no-wildcards");
++//	fr_process_add_arg (comm->process, "--no-unquote");
+ 	fr_process_add_arg (comm->process, "-v");
+ 	fr_process_add_arg (comm->process, "--delete");
+ 	fr_process_add_arg (comm->process, "-f");
+@@ -426,6 +505,7 @@
+ 			fr_process_add_arg (comm->process, scan->data);
+ 
+ 	fr_process_end_command (comm->process);
++*/
+ }
+ 
+ 
+@@ -454,9 +534,9 @@
+ 				      comm);
+ 
+ 	begin_tar_command (comm);
+-	fr_process_add_arg (comm->process, "--force-local");
+-	fr_process_add_arg (comm->process, "--no-wildcards");
+-	fr_process_add_arg (comm->process, "--no-unquote");
++//	fr_process_add_arg (comm->process, "--force-local");
++//	fr_process_add_arg (comm->process, "--no-wildcards");
++//	fr_process_add_arg (comm->process, "--no-unquote");
+ 	fr_process_add_arg (comm->process, "-v");
+ 	fr_process_add_arg (comm->process, "-p");
+ 
