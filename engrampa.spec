@@ -99,7 +99,7 @@ like tar and zip. The supported file types are :
 %{_iconsdir}/hicolor/*/apps/*.png
 %{_iconsdir}/hicolor/scalable/apps/*.svg
 %{_libdir}/caja/extensions-2.0/libcaja-%{name}.so
-%{_datadir}/appdata/engrampa.appdata.xml
+%{_datadir}/metainfo/engrampa.appdata.xml
 %{_datadir}/caja/extensions/libcaja-engrampa.caja-extension
 %{_datadir}/dbus-1/services/org.mate.Engrampa.service
 %{_mandir}/man1/engrampa.1*
