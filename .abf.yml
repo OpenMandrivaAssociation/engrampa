@@ -1,6 +1,2 @@
-removed_sources:
-  engrampa-1.14.1.tar.xz: 1245f5203b37b842cfaf818781b17cd22f1234b1
-  engrampa-1.18.2.tar.xz: 14b6f334bb6dde2bf9441b42438fc1e0aa76dee9
-  engrampa-1.20.0.tar.xz: 1aee58172605abe459df4b32900ed8ee122fb01e
 sources:
-  engrampa-1.22.1.tar.xz: a3a64f9d6f184ef7ce424ae8aa307338ccc5eb67
+  engrampa-1.22.3.tar.xz: f130f5c13ea116dbcf7455932516e39eb12b50da
