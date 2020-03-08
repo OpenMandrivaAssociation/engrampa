@@ -9,7 +9,7 @@ Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
-Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
+#Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
