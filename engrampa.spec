@@ -3,7 +3,7 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.22.3
+Version:	1.24.0
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
@@ -11,6 +11,7 @@ Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
 Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
+BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
 BuildRequires:	itstool
@@ -117,10 +118,10 @@ like tar and zip. The supported file types are :
 	--enable-magic \
 	--enable-packagekit \
 	%{nil}
-%make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 # locales
 %find_lang %{name} --with-gnome --all-name
