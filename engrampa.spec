@@ -99,9 +99,9 @@ like tar and zip. The supported file types are :
 %{_datadir}/glib-2.0/schemas/org.mate.engrampa.gschema.xml
 %{_iconsdir}/hicolor/*/apps/*.png
 %{_iconsdir}/hicolor/scalable/apps/*.svg
-%{_datadir}/icons/hicolor/16x16/actions/add-files-to-archive.png
-%{_datadir}/icons/hicolor/16x16/actions/add-folder-to-archive.png
-%{_datadir}/icons/hicolor/16x16/actions/extract-archive.png
+%{_datadir}/icons/hicolor/*/actions/add-files-to-archive.png
+%{_datadir}/icons/hicolor/*/actions/add-folder-to-archive.png
+%{_datadir}/icons/hicolor/*/actions/extract-archive.png
 %{_libdir}/caja/extensions-2.0/libcaja-%{name}.so
 %{_datadir}/metainfo/engrampa.appdata.xml
 %{_datadir}/caja/extensions/libcaja-engrampa.caja-extension
