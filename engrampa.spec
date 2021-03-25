@@ -3,7 +3,7 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.24.1
+Version:	1.24.2
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
