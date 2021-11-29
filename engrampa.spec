@@ -4,7 +4,7 @@
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
 Version:	1.26.0
-Release:	1
+Release:	2
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
@@ -30,6 +30,9 @@ BuildRequires:	pkgconfig(sm)
 BuildRequires:	xsltproc
 BuildRequires:	yelp-tools
 
+# libarchive is not supported yet
+#      https://github.com/mate-desktop/engrampa/issues/52
+Requires:      gnutar
 # for the gsettings schema
 Requires:	caja
 
