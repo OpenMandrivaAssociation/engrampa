@@ -1,0 +1,54 @@
+From 073c06814e0dcbb7bbdcecb867fc8c15d3fdddfa Mon Sep 17 00:00:00 2001
+From: rbuj <robert.buj@gmail.com>
+Date: Fri, 22 Oct 2021 10:30:10 +0200
+Subject: [PATCH 3/3] file-data: fix memory leak
+
+---
+ src/file-data.c      | 11 ++++++++---
+ src/fr-command-tar.c |  7 +++++--
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/src/file-data.c b/src/file-data.c
+index 911a5e9..cc0832f 100644
+--- a/src/file-data.c
++++ b/src/file-data.c
+@@ -103,10 +103,15 @@ file_data_get_type (void)
+ void
+ file_data_update_content_type (FileData *fdata)
+ {
+-	if (fdata->dir)
++	if (fdata->dir) {
+ 		fdata->content_type = MIME_TYPE_DIRECTORY;
+-	else
+-		fdata->content_type = get_static_string (g_content_type_guess (fdata->full_path, NULL, 0, NULL));
++	} else {
++		char *content_type;
++
++		content_type = g_content_type_guess (fdata->full_path, NULL, 0, NULL);
++		fdata->content_type = get_static_string (content_type);
++		g_free (content_type);
++	}
+ }
+ 
+ 
+diff --git a/src/fr-command-tar.c b/src/fr-command-tar.c
+index 50aae1a..6f7943f 100644
+--- a/src/fr-command-tar.c
++++ b/src/fr-command-tar.c
+@@ -140,8 +140,11 @@ process_line (char     *line,
+ 	}
+ 	g_free (name);
+ 	name = g_filename_from_utf8 (fdata->original_path, -1, NULL, NULL, NULL);
+-	if (name)
+-		fdata->original_path = name;
++	if (name) {
++		fdata->original_path = g_strdup (name);
++		fdata->free_original_path = TRUE;
++	}
++	g_free (name);
+ 
+ 	if (fields[1] != NULL)
+ 		fdata->link = g_strdup (fields[1]);
+-- 
+2.36.1
+

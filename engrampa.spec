@@ -1,16 +1,18 @@
 %define url_ver %(echo %{version}|cut -d. -f1,2)
-%define oname	mate-file-archiver
+%define oname mate-file-archiver
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
 Version:	1.26.0
-Release:	3
+Release:	4
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
-
+Patch1:		engrampa_0001-dlg-package-installer-fix-memory-leak.patch
+Patch2:		engrampa_0002-fr-window-fix-memory-leak.patch
+Patch3:		engrampa_0003-file-data-fix-memory-leak.patch
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
@@ -32,7 +34,7 @@ BuildRequires:	yelp-tools
 
 # libarchive is not supported yet
 #      https://github.com/mate-desktop/engrampa/issues/52
-Requires:      gnutar
+Requires:	gnutar
 # for the gsettings schema
 Requires:	caja
 
@@ -109,21 +111,20 @@ like tar and zip. The supported file types are :
 %{_datadir}/metainfo/engrampa.appdata.xml
 %{_datadir}/caja/extensions/libcaja-engrampa.caja-extension
 %{_datadir}/dbus-1/services/org.mate.Engrampa.service
-%{_mandir}/man1/engrampa.1*
+%doc %{_mandir}/man1/engrampa.1*
 
 #---------------------------------------------------------------------------
 
 %prep
-%setup -q
-%autopatch -p1
+%autosetup -p1
 
 %build
 %configure \
 	--disable-schemas-compile \
 	--enable-caja-actions \
 	--enable-magic \
-	--enable-packagekit \
-	%{nil}
+	--enable-packagekit
+
 %make_build
 
 %install
