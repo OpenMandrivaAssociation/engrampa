@@ -1,6 +1,9 @@
 %define url_ver %(echo %{version}|cut -d. -f1,2)
 %define oname mate-file-archiver
 
+# Workaround for Clang 15
+%global optflags %{optflags} -Wno-error -Wno-implicit-function-declaration
+
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
 Version:	1.26.1
