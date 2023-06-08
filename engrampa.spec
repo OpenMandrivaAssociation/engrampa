@@ -3,16 +3,14 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.26.0
-Release:	4
+Version:	1.26.1
+Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		http://mate-desktop.org
 Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
-Patch1:		engrampa_0001-dlg-package-installer-fix-memory-leak.patch
-Patch2:		engrampa_0002-fr-window-fix-memory-leak.patch
-Patch3:		engrampa_0003-file-data-fix-memory-leak.patch
+
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
