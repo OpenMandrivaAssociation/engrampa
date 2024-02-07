@@ -6,12 +6,12 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.26.1
+Version:	1.26.2
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
-Url:		http://mate-desktop.org
-Source0:	http://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
+Url:		https://mate-desktop.org
+Source0:	https://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
 BuildRequires:	autoconf-archive
