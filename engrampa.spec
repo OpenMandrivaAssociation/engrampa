@@ -1,17 +1,14 @@
-%define url_ver %(echo %{version}|cut -d. -f1,2)
+%define mate_ver	%(echo %{version}|cut -d. -f1,2)
 %define oname mate-file-archiver
-
-# Workaround for Clang 15
-%global optflags %{optflags} -Wno-error -Wno-implicit-function-declaration
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.26.2
+Version:	1.28.0
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		https://mate-desktop.org
-Source0:	https://pub.mate-desktop.org/releases/%{url_ver}/%{name}-%{version}.tar.xz
+Source0:	https://pub.mate-desktop.org/releases/%{mate_ver}/%{name}-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
 BuildRequires:	autoconf-archive
@@ -29,6 +26,7 @@ BuildRequires:	pkgconfig(gthread-2.0)
 BuildRequires:	pkgconfig(gtk+-3.0)
 BuildRequires:	pkgconfig(json-glib-1.0)
 BuildRequires:	pkgconfig(libcaja-extension)
+BuildRequires:	pkgconfig(libarchive)
 BuildRequires:	pkgconfig(sm)
 BuildRequires:	xsltproc
 BuildRequires:	yelp-tools
@@ -38,7 +36,7 @@ BuildRequires:	yelp-tools
 Requires:	gnutar
 # for the gsettings schema
 Requires:	caja
-
+Requires:	unar
 Suggests:	cdrecord-isotools
 
 %rename		%{oname}
