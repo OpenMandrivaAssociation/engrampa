@@ -11,6 +11,10 @@ Url:		https://mate-desktop.org
 Source0:	https://pub.mate-desktop.org/releases/%{mate_ver}/%{name}-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
