@@ -3,17 +3,17 @@
 
 Summary:	An archive manager for MATE Desktop
 Name:		engrampa
-Version:	1.28.2
+Version:	1.28.5
 Release:	1
 Group:		Archiving/Compression
 License:	GPLv2+ and LGPLv2+
 Url:		https://mate-desktop.org
-Source0:	https://pub.mate-desktop.org/releases/%{mate_ver}/%{name}-%{version}.tar.xz
+#Source0:	https://pub.mate-desktop.org/releases/%{mate_ver}/%{name}-%{version}.tar.xz
+# Use for now tarball from GitHub because from few months sources at mate-desktop.org was not updated.
+Source0:	https://github.com/mate-desktop/engrampa/releases/download/v%{version}/engrampa-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
-BuildRequires:	automake
-BuildRequires:	libtool-base
-BuildRequires:	slibtool
+BuildRequires:	meson
 BuildRequires:	make
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
