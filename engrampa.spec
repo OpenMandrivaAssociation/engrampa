@@ -13,7 +13,9 @@ Url:		https://mate-desktop.org
 Source0:	https://github.com/mate-desktop/engrampa/releases/download/v%{version}/engrampa-%{version}.tar.xz
 #Patch0:		%{name}-1.18.2-port-to-libarchiver-tar.patch
 
-BuildRequires:	meson
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
 BuildRequires:	make
 BuildRequires:	autoconf-archive
 BuildRequires:	desktop-file-utils
